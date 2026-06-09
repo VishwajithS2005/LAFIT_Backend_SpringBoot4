@@ -25,18 +25,17 @@ public class ResolutionClaim {
     private UUID id;
 
     @Setter
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(
             name = "item",
             referencedColumnName = "id",
             nullable = false,
-            unique = true,
             foreignKey = @ForeignKey(name = "FK_RC_ITEMS")
     )
     private Item item;
 
     @Setter
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
             name = "claimant",
             referencedColumnName = "id",

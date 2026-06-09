@@ -109,4 +109,8 @@ public class UserService {
             throw new Exception("There is no valid user with this id.");
         }
     }
+
+    public Users getById(UUID userId) {
+        return userRepository.findById(userId).orElse(null);
+    }
 }

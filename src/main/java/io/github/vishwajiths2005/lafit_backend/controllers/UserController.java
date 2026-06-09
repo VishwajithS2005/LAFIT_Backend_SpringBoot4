@@ -10,6 +10,7 @@ import io.github.vishwajiths2005.lafit_backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,9 +39,16 @@ public class UserController {
 
     //Delete a user from the db.
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
         userService.delete(id);
+    }
+
+    @DeleteMapping("")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteSelf(@AuthenticationPrincipal MyUserDetails userDetails) {
+        userService.delete(userDetails.getId());
     }
 
     //Get a list of all registered users available in the db.
@@ -58,14 +66,20 @@ public class UserController {
 
     //Change username, password or email.
     @PutMapping("/{id}")
-    public UserResponse update(@PathVariable UUID id, @Valid @RequestBody UserUpdateRequest userUpdateRequest) throws Exception {
+    public UserResponse update(
+            @PathVariable UUID id,
+            @Valid @RequestBody UserUpdateRequest userUpdateRequest
+    ) throws Exception {
         return userService.update(id, userUpdateRequest);
     }
 
     //Change roles for any existing user.
     @PatchMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public UserResponse changeRole(@PathVariable UUID id, @RequestBody ChangeRoleRequest changeRoleRequest) throws Exception {
+    public UserResponse changeRole(
+            @PathVariable UUID id,
+            @RequestBody ChangeRoleRequest changeRoleRequest
+    ) throws Exception {
         return userService.changeRole(id, changeRoleRequest.getRole());
     }
 

@@ -1,5 +1,6 @@
 package io.github.vishwajiths2005.lafit_backend.models;
 
+import io.github.vishwajiths2005.lafit_backend.enums.Role;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
 public class MyUserDetails implements UserDetails {
 
@@ -32,6 +34,14 @@ public class MyUserDetails implements UserDetails {
     @NonNull
     public String getUsername() {
         return user.getUsername();
+    }
+
+    public UUID getId() {
+        return user.getId();
+    }
+
+    public Role getRole() {
+        return user.getRole();
     }
 
 }

@@ -68,4 +68,14 @@ public class Item {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    public boolean isSameItem(Item item2) {
+        return (
+                this.getItemName().equals(item2.getItemName())
+                && this.getItemDescription().equals(item2.getItemDescription())
+                && this.getImageLink().equals(item2.getImageLink())
+                && this.getItemLocation().equals(item2.getImageLink())
+                && this.reportedBy.equals(item2.getReportedBy())
+                );
+    }
+
 }
