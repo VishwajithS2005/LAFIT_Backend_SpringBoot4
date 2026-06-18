@@ -131,6 +131,9 @@ public class ItemService {
         if(item.getItemLocation() != null) {
             oldItem.setItemLocation(item.getItemLocation());
         }
+        if(item.getStatus() != null) {
+            oldItem.setStatus(item.getStatus());
+        }
         return itemMapper.itemToItemResponse(itemRepository.save(oldItem));
     }
 

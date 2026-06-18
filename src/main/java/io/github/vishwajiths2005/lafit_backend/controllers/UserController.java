@@ -83,4 +83,9 @@ public class UserController {
         return userService.changeRole(id, changeRoleRequest.getRole());
     }
 
+    @GetMapping("/verify")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void verify() {
+    }
+
 }
