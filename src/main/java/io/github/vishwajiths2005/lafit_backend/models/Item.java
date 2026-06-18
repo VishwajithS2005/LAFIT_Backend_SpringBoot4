@@ -5,6 +5,8 @@ import io.github.vishwajiths2005.lafit_backend.enums.ItemType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -58,6 +60,7 @@ public class Item {
             nullable = false,
             foreignKey = @ForeignKey(name = "FK_ITEMS_USERS")
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Users reportedBy;
 
     @CreationTimestamp

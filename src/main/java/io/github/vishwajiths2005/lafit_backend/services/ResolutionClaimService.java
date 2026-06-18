@@ -159,7 +159,21 @@ public class ResolutionClaimService {
         return claimMapper.resolutionClaimToResponse(claimRepository.save(rc));
     }
 
+    @Transactional
     public void deleteClaim(UUID claimId) {
-        claimRepository.deleteById(claimId);
+        ResolutionClaim claim = claimRepository.findById(claimId).orElseThrow(() -> new NotFoundException("Not found."));
+        if(claim.getStatus() == ResolutionStatus.APPROVED) {
+            UUID itemId = claim.getItem().getId();
+            claimRepository.deleteById(claimId);
+            claimRepository.revertRejectedClaimsToPending(
+                    itemId,
+                    ResolutionStatus.REJECTED,
+                    ResolutionStatus.PENDING
+            );
+            itemService.editStatus(ItemStatus.APPROVED, itemId);
+        }
+        else {
+            claimRepository.deleteById(claimId);
+        }
     }
 }

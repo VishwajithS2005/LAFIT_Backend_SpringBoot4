@@ -28,11 +28,19 @@ public interface ResolutionClaimRepository extends JpaRepository<ResolutionClaim
     List<ResolutionClaim> findByStatusAndActionType(ResolutionStatus status, ActionType actionType);
     List<ResolutionClaim> findByStatusAndActionTypeAndClaimantId(ResolutionStatus status, ActionType actionType, UUID claimant_id);
 
-    @Modifying(clearAutomatically = true)
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("UPDATE ResolutionClaim rc SET rc.status = :newStatus WHERE rc.item.id = :itemId AND rc.id != :approvedClaimId")
     void rejectOtherClaimsForItem(
             @Param("itemId") UUID itemId,
             @Param("approvedClaimId") UUID approvedClaimId,
+            @Param("newStatus") ResolutionStatus newStatus
+    );
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("UPDATE ResolutionClaim rc SET rc.status = :newStatus WHERE rc.item.id = :itemId AND rc.status = :oldStatus")
+    void revertRejectedClaimsToPending(
+            @Param("itemId") UUID itemId,
+            @Param("oldStatus") ResolutionStatus oldStatus,
             @Param("newStatus") ResolutionStatus newStatus
     );
 

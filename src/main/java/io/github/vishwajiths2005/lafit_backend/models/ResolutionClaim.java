@@ -5,6 +5,8 @@ import io.github.vishwajiths2005.lafit_backend.enums.ResolutionStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -32,6 +34,7 @@ public class ResolutionClaim {
             nullable = false,
             foreignKey = @ForeignKey(name = "FK_RC_ITEMS")
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Item item;
 
     @Setter
@@ -42,6 +45,7 @@ public class ResolutionClaim {
             nullable = false,
             foreignKey = @ForeignKey(name = "FK_RC_USERS")
     )
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Users claimant;
 
     @Setter
