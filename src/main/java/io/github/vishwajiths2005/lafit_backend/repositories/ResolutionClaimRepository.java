@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public interface ResolutionClaimRepository extends JpaRepository<ResolutionClaim, UUID> {
 
-    Optional<ResolutionClaim> findByItemId(UUID id);
+    List<ResolutionClaim> findByItemId(UUID id);
     Optional<ResolutionClaim> findByItemIdAndClaimantId(UUID item_id, UUID claimant_id);
 
     List<ResolutionClaim> findByClaimantId(UUID claimant_id);

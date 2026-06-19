@@ -51,9 +51,11 @@ public class ResolutionClaimService {
         }
         claim.setClaimant(user);
         claim.setStatus(request.getStatus());
-        Optional<ResolutionClaim> rc = claimRepository.findByItemId(request.getItemId());
-        if(rc.isPresent() && rc.get().getStatus() == ResolutionStatus.APPROVED) {
-            throw new AlreadyExistsException("The Resolution Claim has already been approved.");
+        List<ResolutionClaim> rcl = claimRepository.findByItemId(request.getItemId());
+        for(ResolutionClaim rc : rcl) {
+            if(rc.getStatus() == ResolutionStatus.APPROVED) {
+                throw new AlreadyExistsException("The Resolution Claim has already been approved.");
+            }
         }
         Optional<ResolutionClaim> rc1 = claimRepository.findByItemIdAndClaimantId(request.getItemId(), id);
         if(rc1.isPresent()) {
