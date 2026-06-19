@@ -44,4 +44,8 @@ public interface ResolutionClaimRepository extends JpaRepository<ResolutionClaim
             @Param("newStatus") ResolutionStatus newStatus
     );
 
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("DELETE FROM ResolutionClaim rc WHERE rc.item.id = :itemId")
+    void deleteAllClaimsByItemId(@Param("itemId") UUID itemId);
+
 }

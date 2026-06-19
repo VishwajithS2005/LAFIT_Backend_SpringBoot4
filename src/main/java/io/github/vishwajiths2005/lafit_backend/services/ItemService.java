@@ -3,6 +3,7 @@ package io.github.vishwajiths2005.lafit_backend.services;
 import io.github.vishwajiths2005.lafit_backend.dtos.ItemResponse;
 import io.github.vishwajiths2005.lafit_backend.enums.ItemStatus;
 import io.github.vishwajiths2005.lafit_backend.enums.ItemType;
+import io.github.vishwajiths2005.lafit_backend.events.ItemEditedEvent;
 import io.github.vishwajiths2005.lafit_backend.mappers.ItemMapper;
 import io.github.vishwajiths2005.lafit_backend.models.AlreadyExistsException;
 import io.github.vishwajiths2005.lafit_backend.models.Item;
@@ -10,6 +11,7 @@ import io.github.vishwajiths2005.lafit_backend.models.NotFoundException;
 import io.github.vishwajiths2005.lafit_backend.models.Users;
 import io.github.vishwajiths2005.lafit_backend.repositories.ItemRepository;
 import lombok.NonNull;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,11 +24,13 @@ public class ItemService {
     private final ItemMapper itemMapper;
     private final ItemRepository itemRepository;
     private final UserService userService;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public ItemService(ItemMapper itemMapper, ItemRepository itemRepository, UserService userService) {
+    public ItemService(ItemMapper itemMapper, ItemRepository itemRepository, UserService userService, ApplicationEventPublisher eventPublisher) {
         this.itemMapper = itemMapper;
         this.itemRepository = itemRepository;
         this.userService = userService;
+        this.eventPublisher = eventPublisher;
     }
 
     public ItemResponse add(Item item, UUID userId) {
@@ -116,24 +120,38 @@ public class ItemService {
 
     public ItemResponse edit(Item item, UUID id) {
         Item oldItem = itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Item not found."));
+
+        boolean isMeaningfulEdit = false;
+
         if(item.getType() != null) {
             oldItem.setType(item.getType());
+            isMeaningfulEdit = true;
         }
         if(item.getItemName() != null) {
             oldItem.setItemName(item.getItemName());
+            isMeaningfulEdit = true;
         }
         if(item.getItemDescription() != null) {
             oldItem.setItemDescription(item.getItemDescription());
+            isMeaningfulEdit = true;
         }
         if(item.getImageLink() != null) {
             oldItem.setImageLink(item.getImageLink());
+            isMeaningfulEdit = true;
         }
         if(item.getItemLocation() != null) {
             oldItem.setItemLocation(item.getItemLocation());
+            isMeaningfulEdit = true;
         }
         if(item.getStatus() != null) {
             oldItem.setStatus(item.getStatus());
+            isMeaningfulEdit = true;
         }
+
+        if(isMeaningfulEdit) {
+            eventPublisher.publishEvent(new ItemEditedEvent(this, id));
+        }
+
         return itemMapper.itemToItemResponse(itemRepository.save(oldItem));
     }
 

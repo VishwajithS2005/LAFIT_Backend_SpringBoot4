@@ -6,10 +6,12 @@ import io.github.vishwajiths2005.lafit_backend.enums.ActionType;
 import io.github.vishwajiths2005.lafit_backend.enums.ItemStatus;
 import io.github.vishwajiths2005.lafit_backend.enums.ItemType;
 import io.github.vishwajiths2005.lafit_backend.enums.ResolutionStatus;
+import io.github.vishwajiths2005.lafit_backend.events.ItemEditedEvent;
 import io.github.vishwajiths2005.lafit_backend.mappers.ResolutionClaimMapper;
 import io.github.vishwajiths2005.lafit_backend.models.*;
 import io.github.vishwajiths2005.lafit_backend.repositories.ResolutionClaimRepository;
 import jakarta.validation.Valid;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -175,5 +177,11 @@ public class ResolutionClaimService {
         else {
             claimRepository.deleteById(claimId);
         }
+    }
+
+    @Transactional
+    @EventListener
+    public void handleItemEditedEvent(ItemEditedEvent event) {
+        claimRepository.deleteAllClaimsByItemId(event.getItemId());
     }
 }
